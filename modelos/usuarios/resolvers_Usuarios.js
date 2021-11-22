@@ -6,6 +6,7 @@ const resolvers_Usuarios = {
             const listaUsuarios = await modeloUsuarios.find()
                 .populate("Proyectos_Liderados")
                 .populate({ path: "Inscripciones", populate: "Proyecto_Id" })
+                .populate({ path: "Avances_Estudiantes", populate: "Proyecto_Id" })
 
             return listaUsuarios
         },
@@ -17,6 +18,7 @@ const resolvers_Usuarios = {
                 const buscarUsuario = await modeloUsuarios.findById({ _id: arg._id })
                     .populate("Proyectos_Liderados")
                     .populate({ path: "Inscripciones", match: {...filtroinscripcion }, populate: "Proyecto_Id" })
+                    .populate({ path: "Avances_Estudiantes", populate: "Proyecto_Id" })
 
                 return buscarUsuario
 
@@ -24,6 +26,7 @@ const resolvers_Usuarios = {
                 const buscarUsuario = await modeloUsuarios.findOne({ $or: [{ Correo: arg.correoOidentificacion }, { Identificacion: arg.correoOidentificacion }] })
                     .populate("Proyectos_Liderados")
                     .populate({ path: "Inscripciones", match: {...filtroinscripcion }, populate: "Proyecto_Id" })
+                    .populate({ path: "Avances_Estudiantes", populate: "Proyecto_Id" })
 
                 return buscarUsuario
             }

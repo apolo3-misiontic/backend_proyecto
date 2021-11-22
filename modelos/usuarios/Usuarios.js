@@ -65,6 +65,12 @@ esquemaUsuarios.virtual("Inscripciones", {
     foreignField: "Estudiante_Id"
 })
 
+esquemaUsuarios.virtual("Avances_Estudiantes", {
+    ref: "avances",
+    localField: "_id",
+    foreignField: "Estudiante_Id"
+})
+
 const modeloUsuarios = model("usuario", esquemaUsuarios)
 
 module.exports = { modeloUsuarios }

@@ -52,8 +52,14 @@ esquemaProyectos.virtual("Inscripciones", { /* Inscripciones es el nombre campo 
     ref: "inscripciones",
     /*El documento desde el cual se quiere traer informacion */
     localField: "_id",
-    /*El enlace de la presente documento el cual pertenece a un campo del documento referenciado*/
-    foreignField: "Proyectos_Id" /*El campo del documento referenciado que contiene el mismo valor de localField */
+    /*El enlace de presente documento el cual pertenece a un campo del documento referenciado*/
+    foreignField: "Proyecto_Id" /*El campo del documento referenciado que contiene el mismo valor de localField */
+})
+
+esquemaProyectos.virtual("Avances_Proyecto", {
+    ref: "avances",
+    localField: "_id",
+    foreignField: "Proyecto_Id"
 })
 
 

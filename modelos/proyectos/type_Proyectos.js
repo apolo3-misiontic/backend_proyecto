@@ -2,17 +2,6 @@ const { gql } = require("apollo-server-express");
 
 const type_Proyectos = gql `
 
-    enum enum_EstadoProyecto{
-        ACTIVO
-        INACTIVO
-    }
-    enum enum_FaseProyecto{
-        INICIADO
-        EN_DESARROLLO
-        TERMINADO
-        NULL
-    }
-
     type Proyecto{
         _id: ID!
         Nombre_Proyecto: String!
@@ -25,6 +14,7 @@ const type_Proyectos = gql `
         Estado: enum_EstadoProyecto!
         Fase: enum_FaseProyecto!
         Inscripciones: [Inscripcion]
+        Avances_Proyecto: [Avance]
     }
 
     type Query{

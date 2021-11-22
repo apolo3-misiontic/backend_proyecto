@@ -2,24 +2,6 @@ const { gql } = require("apollo-server-express");
 
 const type_Usuarios = gql `
 
-    enum enum_Roles{
-        ESTUDIANTE
-        LIDER
-        ADMINISTRADOR
-    }
-
-    enum enum_EstadoRegistro{
-        PENDIENTE
-        AUTORIZADO
-        NO_AUTORIZADO
-    }
-
-    enum enum_EstadoInscripcion{
-        PENDIENTE
-        ACEPTADA
-        RECHAZADA
-    }
-
     type Usuario{
         _id: ID!
         Primer_Nombre: String!
@@ -33,12 +15,13 @@ const type_Usuarios = gql `
         Estado: enum_EstadoRegistro!
         Proyectos_Liderados: [Proyecto]
         Inscripciones: [Inscripcion]
+        Avances_Estudiantes: [Avance]
     }
 
     type Query{
         listarUsuarios: [Usuario]
         buscarUsuario(
-            _id: String
+            _id: ID
             correoOidentificacion: String
             FiltroInscripciones: enum_EstadoInscripcion
         ):Usuario

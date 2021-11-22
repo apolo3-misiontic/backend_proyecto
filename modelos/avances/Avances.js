@@ -1,5 +1,5 @@
 const { Schema, model } = require("mongoose")
-
+const moment = require("moment")
 
 const esquemaAvances = new Schema({
 
@@ -15,11 +15,13 @@ const esquemaAvances = new Schema({
     },
     Fecha_Avance: {
         type: Date,
-        default: new Date.now()
+        required: true,
+        default: Date.now()
     },
     Descripcion: {
         type: String,
         required: true
+
     },
     Observaciones: {
         type: String
@@ -30,3 +32,6 @@ const esquemaAvances = new Schema({
 const modeloAvances = model("avances", esquemaAvances, "avances")
 
 module.exports = { modeloAvances }
+
+/* var a = moment("").format('YYYY/MM/DD HH:mm:ss')
+console.log(a) */

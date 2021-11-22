@@ -3,15 +3,21 @@ const { modeloInscripciones } = require("./Inscripciones")
 const resolvers_Inscripciones = {
     Query: {
         listarInscripciones: async(parent, arg) => {
-            const listadoInscripciones = await modeloInscripciones.find().populate("Estudiante_Id").populate("Proyecto_Id")
+            const listadoInscripciones = await modeloInscripciones.find()
+                .populate("Estudiante_Id")
+                .populate("Proyecto_Id")
             return listadoInscripciones
         },
         listarPorIdProyecto: async(parent, arg) => {
-            const listaPorProyecto = await modeloInscripciones.find({ Proyecto_Id: arg.Proyecto_Id }).populate("Estudiante_Id").populate("Proyecto_Id")
+            const listaPorProyecto = await modeloInscripciones.find({ Proyecto_Id: arg.Proyecto_Id })
+                .populate("Estudiante_Id")
+                .populate("Proyecto_Id")
             return listaPorProyecto
         },
         buscarInscripcion: async(parent, arg) => {
-            const buscarPorId = await modeloInscripciones.findById({ _id: arg._id }).populate("Estudiante_Id").populate("Proyecto_Id")
+            const buscarPorId = await modeloInscripciones.findById({ _id: arg._id })
+                .populate("Estudiante_Id")
+                .populate("Proyecto_Id")
             return buscarPorId
         }
     },
