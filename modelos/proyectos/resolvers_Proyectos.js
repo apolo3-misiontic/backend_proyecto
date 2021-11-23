@@ -48,16 +48,17 @@ const resolvers_Proyectos = {
             return proyectoCreado
         },
         editarProyecto: async(parent, arg) => {
-            const proyectoEditado = await modeloProyectos.findByIdAndUpdate({ _id: arg._id }, {
+            var proyectoEditado = await modeloProyectos.findByIdAndUpdate({ _id: arg._id }, {
                 Nombre_Proyecto: arg.Nombre_Proyecto,
                 Objetivo_General: arg.Objetivo_General,
-                $push: { Objetivos_Especificos: arg.Objetivos_Especificos },
+                Objetivos_Especificos: arg.Objetivos_Especificos,
                 Presupuesto: arg.Presupuesto,
                 Fecha_Inicio: arg.Fecha_Inicio,
                 Fecha_Terminacion: arg.Fecha_Terminacion,
                 Estado: arg.Estado,
                 Fase: arg.Fase
             }, { new: true })
+
             return proyectoEditado
         },
         eliminarProyecto: async(parent, arg) => {
@@ -68,3 +69,27 @@ const resolvers_Proyectos = {
 }
 
 module.exports = { resolvers_Proyectos }
+
+/*
+ if (arg.Objetivos_Especificos) {
+                var array = []
+                proyectoEditado.Objetivos_Especificos.map(elem => {
+                    arg.Objetivos_Especificos.map(elem2 => {
+                        if (elem._id === elem2._id) {
+                            elem.Descripcion = elem2.Descripcion
+                        } else {
+                            array.push(elem2)
+                        }
+                    })
+                })
+                if (array.length > 0) {
+                    var arrayfinal = proyectoEditado.Objetivos_Especificos.concat(array)
+                }
+
+                const nuevoProyectoEditado = await modeloProyectos.findByIdAndUpdate({ _id: arg._id }, {
+                    Objetivos_Especificos: arrayfinal,
+                }, { new: true })
+
+                return nuevoProyectoEditado
+            }
+*/

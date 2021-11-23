@@ -18,11 +18,11 @@ const servidor = new ApolloServer({
     resolvers: Resolvers
 })
 
+
 app.listen(puerto, async() => {
-    await conexionBD()
-    await servidor.start()
-
-    servidor.applyMiddleware({ app })
-
-    console.log("conexion exitosa al servidor, puerto =>", puerto)
+    conexionBD()
+        .then(() => servidor.start())
+        .then(() => servidor.applyMiddleware({ app }))
+        .then(() => console.log("conexion exitosa al servidor, puerto =>", puerto))
+        .catch(e => console.warn({ messageError: e }))
 })

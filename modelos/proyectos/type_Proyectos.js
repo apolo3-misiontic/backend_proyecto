@@ -2,6 +2,7 @@ const { gql } = require("apollo-server-express");
 
 const type_Proyectos = gql `
 
+
     type Proyecto{
         _id: ID!
         Nombre_Proyecto: String!
@@ -56,3 +57,12 @@ const type_Proyectos = gql `
 `
 
 module.exports = { type_Proyectos }
+
+/* type Objetivo_Especifico {
+    _id: ID!
+    Descripcion: String!
+}
+
+input crear_especifico {
+    Descripcion: String!
+} */
