@@ -3,6 +3,7 @@ const { modeloProyectos } = require("./Proyectos")
 const resolvers_Proyectos = {
     Query: {
         listarProyectos: async(parent, arg) => {
+
             const listadoProyectos = await modeloProyectos.find()
                 .populate("Lider_Id")
                 .populate({ path: "Inscripciones", populate: "Estudiante_Id" })
@@ -48,7 +49,8 @@ const resolvers_Proyectos = {
             return proyectoCreado
         },
         editarProyecto: async(parent, arg) => {
-            var proyectoEditado = await modeloProyectos.findByIdAndUpdate({ _id: arg._id }, {
+
+            const proyectoEditado = await modeloProyectos.findByIdAndUpdate({ _id: arg._id }, {
                 Nombre_Proyecto: arg.Nombre_Proyecto,
                 Objetivo_General: arg.Objetivo_General,
                 Objetivos_Especificos: arg.Objetivos_Especificos,

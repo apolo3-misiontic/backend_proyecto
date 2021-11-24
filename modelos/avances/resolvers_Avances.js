@@ -1,5 +1,4 @@
 const { modeloAvances } = require("./Avances")
-const moment = require("moment")
 
 const resolvers_Avances = {
     Query: {

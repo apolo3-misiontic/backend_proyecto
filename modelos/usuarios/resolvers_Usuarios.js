@@ -1,4 +1,19 @@
 const { modeloUsuarios } = require("./Usuarios")
+const { genSalt, hash } = require("bcrypt")
+const { sign } = require("jsonwebtoken")
+
+async function Encriptacion(contrasena) {
+    const salt = await genSalt(10)
+    const encriptado = await hash(contrasena, salt)
+    return encriptado
+}
+
+async function GeneradorToken(payload) {
+    const firma = await sign(payload, "colocarsecretoaqui", {
+        expiresIn: '24h'
+    })
+    return firma
+}
 
 const resolvers_Usuarios = {
     Query: {
@@ -34,7 +49,7 @@ const resolvers_Usuarios = {
     },
     Mutation: {
         crearUsuario: async(parent, arg) => {
-
+            const hash_contrasena = await Encriptacion(arg.Contrasena)
             const usuarioCreado = await modeloUsuarios.create({
                 Primer_Nombre: arg.Primer_Nombre,
                 Segundo_Nombre: arg.Segundo_Nombre,
@@ -42,10 +57,29 @@ const resolvers_Usuarios = {
                 Segundo_Apellido: arg.Segundo_Apellido,
                 Correo: arg.Correo,
                 Identificacion: arg.Identificacion,
-                Contrasena: arg.Contrasena,
+                Contrasena: hash_contrasena,
                 Rol: arg.Rol,
             })
             return usuarioCreado
+        },
+        registrarUsuario: async(parent, arg) => {
+            const hash_contrasena = await Encriptacion(arg.Contrasena)
+            const registroCreado = await modeloUsuarios.create({
+                Primer_Nombre: arg.Primer_Nombre,
+                Segundo_Nombre: arg.Segundo_Nombre,
+                Primer_Apellido: arg.Primer_Apellido,
+                Segundo_Apellido: arg.Segundo_Apellido,
+                Correo: arg.Correo,
+                Identificacion: arg.Identificacion,
+                Contrasena: hash_contrasena,
+                Rol: arg.Rol,
+            })
+
+            delete registroCreado._doc.Contrasena //Revisar si el _doc es por la version de mongo
+            const token = await GeneradorToken({...registroCreado._doc })
+
+            return { Token: token }
+
         },
         editarUsuario_Id: async(parent, arg) => {
             const usuarioEditadoId = await modeloUsuarios.findByIdAndUpdate({ _id: arg._id }, {
@@ -77,12 +111,11 @@ const resolvers_Usuarios = {
 }
 
 module.exports = { resolvers_Usuarios }
+    /*
+    else if (Object.keys(arg).includes("Identificacion")) {
+                    const buscarUsuario = await modeloUsuarios.findOne({ Identificacion: arg.Identificacion })
+                        .populate("Proyectos_Liderados")
+                        .populate({ path: "Inscripciones", populate: "Proyecto_Id" })
 
-/*
-else if (Object.keys(arg).includes("Identificacion")) {
-                const buscarUsuario = await modeloUsuarios.findOne({ Identificacion: arg.Identificacion })
-                    .populate("Proyectos_Liderados")
-                    .populate({ path: "Inscripciones", populate: "Proyecto_Id" })
-
-                return buscarUsuario
-*/
+                    return buscarUsuario
+    */
