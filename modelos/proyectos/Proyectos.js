@@ -1,6 +1,5 @@
 const { Schema, model } = require("mongoose")
 
-
 const esquemaProyectos = new Schema({
     Nombre_Proyecto: {
         type: String,
@@ -44,6 +43,7 @@ const esquemaProyectos = new Schema({
     toJSON: { virtuals: true },
     toObject: { virtuals: true }
 })
+
 
 /* query virtual => permite traer los campos del documento referenciado hacia el presente documento
 pero solo en cache, el campo Inscripciones no existe en el documento de la BD

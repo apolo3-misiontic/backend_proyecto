@@ -1,6 +1,5 @@
 const { Schema, model } = require("mongoose")
 
-
 const esquemaUsuarios = new Schema({
 
     Primer_Nombre: {

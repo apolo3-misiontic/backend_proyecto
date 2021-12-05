@@ -1,4 +1,5 @@
 const { gql } = require("apollo-server-express")
+const { type_Auth } = require("../modelos/auth/type_auth")
 const { type_Avances } = require("../modelos/avances/type_Avances")
 const { type_Inscripciones } = require("../modelos/inscripciones/type_Inscripciones")
 const { type_Proyectos } = require("../modelos/proyectos/type_Proyectos")
@@ -37,6 +38,6 @@ const type_General = gql `
     }
 
 `
-const Types = [type_General, type_Usuarios, type_Proyectos, type_Inscripciones, type_Avances]
+const Types = [type_General, type_Usuarios, type_Auth, type_Proyectos, type_Inscripciones, type_Avances]
 
 module.exports = { Types }

@@ -1,23 +1,8 @@
 const { modeloUsuarios } = require("./Usuarios")
-const { genSalt, hash } = require("bcrypt")
-const { sign } = require("jsonwebtoken")
-
-async function Encriptacion(contrasena) {
-    const salt = await genSalt(10)
-    const encriptado = await hash(contrasena, salt)
-    return encriptado
-}
-
-async function GeneradorToken(payload) {
-    const firma = await sign(payload, "colocarsecretoaqui", {
-        expiresIn: '24h'
-    })
-    return firma
-}
 
 const resolvers_Usuarios = {
     Query: {
-        listarUsuarios: async(parent, arg) => {
+        listarUsuarios: async (parent, arg) => {
             const listaUsuarios = await modeloUsuarios.find()
                 .populate("Proyectos_Liderados")
                 .populate({ path: "Inscripciones", populate: "Proyecto_Id" })
@@ -25,14 +10,14 @@ const resolvers_Usuarios = {
 
             return listaUsuarios
         },
-        buscarUsuario: async(parent, arg) => {
+        buscarUsuario: async (parent, arg) => {
 
             const filtroinscripcion = arg.FiltroInscripciones && { Estado: arg.FiltroInscripciones }
 
             if (Object.keys(arg).includes("_id")) {
                 const buscarUsuario = await modeloUsuarios.findById({ _id: arg._id })
                     .populate("Proyectos_Liderados")
-                    .populate({ path: "Inscripciones", match: {...filtroinscripcion }, populate: "Proyecto_Id" })
+                    .populate({ path: "Inscripciones", match: { ...filtroinscripcion }, populate: "Proyecto_Id" })
                     .populate({ path: "Avances_Estudiantes", populate: "Proyecto_Id" })
 
                 return buscarUsuario
@@ -40,7 +25,7 @@ const resolvers_Usuarios = {
             } else if (Object.keys(arg).includes("correoOidentificacion")) {
                 const buscarUsuario = await modeloUsuarios.findOne({ $or: [{ Correo: arg.correoOidentificacion }, { Identificacion: arg.correoOidentificacion }] })
                     .populate("Proyectos_Liderados")
-                    .populate({ path: "Inscripciones", match: {...filtroinscripcion }, populate: "Proyecto_Id" })
+                    .populate({ path: "Inscripciones", match: { ...filtroinscripcion }, populate: "Proyecto_Id" })
                     .populate({ path: "Avances_Estudiantes", populate: "Proyecto_Id" })
 
                 return buscarUsuario
@@ -48,7 +33,7 @@ const resolvers_Usuarios = {
         }
     },
     Mutation: {
-        crearUsuario: async(parent, arg) => {
+        crearUsuario: async (parent, arg) => {
             const hash_contrasena = await Encriptacion(arg.Contrasena)
             const usuarioCreado = await modeloUsuarios.create({
                 Primer_Nombre: arg.Primer_Nombre,
@@ -62,26 +47,7 @@ const resolvers_Usuarios = {
             })
             return usuarioCreado
         },
-        registrarUsuario: async(parent, arg) => {
-            const hash_contrasena = await Encriptacion(arg.Contrasena)
-            const registroCreado = await modeloUsuarios.create({
-                Primer_Nombre: arg.Primer_Nombre,
-                Segundo_Nombre: arg.Segundo_Nombre,
-                Primer_Apellido: arg.Primer_Apellido,
-                Segundo_Apellido: arg.Segundo_Apellido,
-                Correo: arg.Correo,
-                Identificacion: arg.Identificacion,
-                Contrasena: hash_contrasena,
-                Rol: arg.Rol,
-            })
-
-            delete registroCreado._doc.Contrasena //Revisar si el _doc es por la version de mongo
-            const token = await GeneradorToken({...registroCreado._doc })
-
-            return { Token: token }
-
-        },
-        editarUsuario_Id: async(parent, arg) => {
+        editarUsuario_Id: async (parent, arg) => {
             const usuarioEditadoId = await modeloUsuarios.findByIdAndUpdate({ _id: arg._id }, {
                 Primer_Nombre: arg.Primer_Nombre,
                 Segundo_Nombre: arg.Segundo_Nombre,
@@ -94,7 +60,7 @@ const resolvers_Usuarios = {
             }, { new: true })
             return usuarioEditadoId
         },
-        eliminarUsuario: async(parent, arg) => {
+        eliminarUsuario: async (parent, arg) => {
             if (Object.keys(arg).includes("_id")) {
                 const usuarioEliminado = await modeloUsuarios.findByIdAndDelete({ _id: arg._id })
                 return usuarioEliminado
@@ -112,10 +78,10 @@ const resolvers_Usuarios = {
 
 module.exports = { resolvers_Usuarios }
     /*
-    else if (Object.keys(arg).includes("Identificacion")) {
-                    const buscarUsuario = await modeloUsuarios.findOne({ Identificacion: arg.Identificacion })
-                        .populate("Proyectos_Liderados")
-                        .populate({ path: "Inscripciones", populate: "Proyecto_Id" })
+else if (Object.keys(arg).includes("Identificacion")) {
+                const buscarUsuario = await modeloUsuarios.findOne({ Identificacion: arg.Identificacion })
+                    .populate("Proyectos_Liderados")
+                    .populate({ path: "Inscripciones", populate: "Proyecto_Id" })
 
-                    return buscarUsuario
-    */
+                return buscarUsuario
+*/

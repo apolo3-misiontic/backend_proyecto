@@ -1,10 +1,6 @@
-const { gql, ApolloError } = require("apollo-server-express");
+const { gql } = require("apollo-server-express");
 
 const type_Usuarios = gql `
-    
-    type Token{
-        Token: String
-    }
 
     type Usuario{
         _id: ID!
@@ -42,17 +38,6 @@ const type_Usuarios = gql `
             Contrasena: String!
             Rol: enum_Roles!
         ): Usuario
-
-        registrarUsuario(
-            Primer_Nombre: String!
-            Segundo_Nombre: String
-            Primer_Apellido: String!
-            Segundo_Apellido: String!
-            Correo: String!
-            Identificacion: String!
-            Contrasena: String!
-            Rol: enum_Roles!
-        ): Token!
 
         editarUsuario_Id(
             _id:ID!

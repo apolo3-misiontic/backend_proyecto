@@ -4,6 +4,7 @@ const { ApolloServer } = require("apollo-server-express")
 const { conexionBD } = require("./basedatos.config/basedatos")
 const { Types } = require("./graphql/typeDefs")
 const { Resolvers } = require("./graphql/resolvers")
+const { ValidarToken } = require("./modelos/auth/Auth")
 
 require("dotenv").config()
 
@@ -15,11 +16,22 @@ app.use(express.json())
 
 const servidor = new ApolloServer({
     typeDefs: Types,
-    resolvers: Resolvers
+    resolvers: Resolvers,
+    context: ({ req }) => {
+        const token = req.headers?.authorization ?? null
+        if (token) {
+            const dataUsuario = ValidarToken(token)
+            if (dataUsuario) {
+                return { dataUsuario: dataUsuario }
+            }
+        }
+        return null
+    },
+
 })
 
 
-app.listen(puerto, async() => {
+app.listen(puerto, async () => {
     conexionBD()
         .then(() => servidor.start())
         .then(() => servidor.applyMiddleware({ app }))
