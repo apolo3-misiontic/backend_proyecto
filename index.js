@@ -25,11 +25,9 @@ const servidor = new ApolloServer({
                 return { dataUsuario: dataUsuario }
             }
         }
-        return null
-    },
-
+        return {Error: "Su sesion expiró o no ha ingresado correctamente"}
+    }
 })
-
 
 app.listen(puerto, async () => {
     conexionBD()

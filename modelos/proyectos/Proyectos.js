@@ -17,12 +17,10 @@ const esquemaProyectos = new Schema({
         type: String
     }],
     Fecha_Inicio: {
-        type: Date,
-        required: true
+        type: Date
     },
     Fecha_Terminacion: {
-        type: Date,
-        required: true
+        type: Date
     },
     Lider_Id: {
         type: Schema.Types.ObjectId,

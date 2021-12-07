@@ -8,7 +8,7 @@ const resolvers_Auth = {
             if(!context.dataUsuario){
                 return { Error: "Token no valido"}
             } else{
-                context.dataUsuario.exp = null
+                //context.dataUsuario.exp = null
                 const tokenRenovado = await GeneradorToken({...context.dataUsuario})
                 return {Token : tokenRenovado }
             }

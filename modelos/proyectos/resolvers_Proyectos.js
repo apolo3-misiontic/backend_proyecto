@@ -1,9 +1,10 @@
+const { Autenticacion_Autorizacion } = require("../auth/type_auth")
 const { modeloProyectos } = require("./Proyectos")
 
 const resolvers_Proyectos = {
     Query: {
-        listarProyectos: async(parent, arg) => {
-
+        listarProyectos: async (parent, arg, context) => {
+            Autenticacion_Autorizacion(context, ["ADMINISTRADOR"])
             const listadoProyectos = await modeloProyectos.find()
                 .populate("Lider_Id")
                 .populate({ path: "Inscripciones", populate: "Estudiante_Id" })
@@ -12,7 +13,7 @@ const resolvers_Proyectos = {
 
             return listadoProyectos
         },
-        buscarProyecto: async(parent, arg) => {
+        buscarProyecto: async (parent, arg) => {
             const proyecto = await modeloProyectos.findById({ _id: arg._id })
                 .populate("Lider_Id")
                 .populate({ path: "Inscripciones", populate: "Estudiante_Id" })
@@ -21,7 +22,7 @@ const resolvers_Proyectos = {
 
             return proyecto
         },
-        buscarProyectosPorLider: async(parent, arg) => {
+        buscarProyectosPorLider: async (parent, arg) => {
             const proyectosPorLider = await modeloProyectos.find({ Lider_Id: arg.Lider_Id })
                 .populate("Lider_Id")
                 .populate({ path: "Inscripciones", populate: "Estudiante_Id" })
@@ -31,41 +32,66 @@ const resolvers_Proyectos = {
         }
     },
     Mutation: {
-        crearProyecto: async(parent, arg) => {
-
+        crearProyecto: async (parent, arg, context) => {
+            Autenticacion_Autorizacion(context, ["LIDER"])
             const proyectoCreado = await modeloProyectos.create({
                 Nombre_Proyecto: arg.Nombre_Proyecto,
                 Objetivo_General: arg.Objetivo_General,
                 Objetivos_Especificos: arg.Objetivos_Especificos,
                 Presupuesto: arg.Presupuesto,
-                Fecha_Inicio: arg.Fecha_Inicio,
-                Fecha_Terminacion: arg.Fecha_Terminacion,
-                Lider_Id: arg.Lider_Id,
-                Estado: arg.Estado,
-                Fase: arg.Fase
+                Lider_Id: arg.Lider_Id
             })
 
             //const proyecto = await modeloProyectos.findById({ _id: proyectoCreado._id }).populate("Lider_Id")
             return proyectoCreado
         },
-        editarProyecto: async(parent, arg) => {
+        editarProyecto: async (parent, arg, context) => {
+            Autenticacion_Autorizacion(context, ["LIDER"])
+            const proyectoBuscado = await modeloProyectos.findById({ _id: arg._id }, { Estado: 1 })
 
-            const proyectoEditado = await modeloProyectos.findByIdAndUpdate({ _id: arg._id }, {
-                Nombre_Proyecto: arg.Nombre_Proyecto,
-                Objetivo_General: arg.Objetivo_General,
-                Objetivos_Especificos: arg.Objetivos_Especificos,
-                Presupuesto: arg.Presupuesto,
-                Fecha_Inicio: arg.Fecha_Inicio,
-                Fecha_Terminacion: arg.Fecha_Terminacion,
-                Estado: arg.Estado,
-                Fase: arg.Fase
-            }, { new: true })
+            if (proyectoBuscado.Estado === "ACTIVO") {
+                const proyectoEditado = await modeloProyectos.findByIdAndUpdate({ _id: arg._id }, {
+                    Nombre_Proyecto: arg.Nombre_Proyecto,
+                    Objetivo_General: arg.Objetivo_General,
+                    Objetivos_Especificos: arg.Objetivos_Especificos,
+                    Presupuesto: arg.Presupuesto,
+                }, { new: true })
 
-            return proyectoEditado
+                return proyectoEditado
+            }
         },
-        eliminarProyecto: async(parent, arg) => {
+        eliminarProyecto: async (parent, arg) => {
             const proyectoEliminado = await modeloProyectos.findByIdAndDelete({ _id: arg._id })
             return proyectoEliminado
+        },
+        cambiarEstadoProyecto: async (parent, arg, context) => {
+            Autenticacion_Autorizacion(context, ["ADMINISTRADOR"])
+            // se pasa la fase desde el front - el usuario no lo incluye
+            if (arg.Fase === "NULL" && arg.Estado === "ACTIVO") {
+                const edicionEstadoProyecto = await modeloProyectos.findByIdAndUpdate({ _id: arg._id }, {
+                    Estado: arg.Estado,
+                    Fase: "INICIADO",
+                    Fecha_Inicio: Date.now()
+                }, { new: true })
+
+                return edicionEstadoProyecto
+
+            }
+        },
+        cambiarFaseProyecto: async (parent, arg, context) => {
+            Autenticacion_Autorizacion(context, ["ADMINISTRADOR"])
+
+            const verificarFaseProyecto = await modeloProyectos.findById({ _id: arg.id }, { Fase: 1 })
+
+            if (arg.Fase === "TERMINADO" && verificarFaseProyecto.Fase === "EN_DESARROLLO") {
+                const edicionFaseProyecto = await modeloProyectos.findByIdAndUpdate({ _id: arg._id }, {
+                    Fase: arg.Fase,
+                    Estado: "INACTIVO",
+                    Fecha_Terminacion: Date.now()
+                }, { new: true })
+
+                return edicionFaseProyecto
+            }
         }
     }
 }

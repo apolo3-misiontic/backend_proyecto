@@ -1,8 +1,10 @@
+const { Autenticacion_Autorizacion } = require("../auth/type_auth")
 const { modeloUsuarios } = require("./Usuarios")
 
 const resolvers_Usuarios = {
     Query: {
-        listarUsuarios: async (parent, arg) => {
+        listarUsuarios: async (parent, arg, context) => {
+            Autenticacion_Autorizacion(context, ["LIDER", "ADMINISTRADOR"])
             const listaUsuarios = await modeloUsuarios.find()
                 .populate("Proyectos_Liderados")
                 .populate({ path: "Inscripciones", populate: "Proyecto_Id" })
@@ -48,6 +50,10 @@ const resolvers_Usuarios = {
             return usuarioCreado
         },
         editarUsuario_Id: async (parent, arg) => {
+            let hash_contrasena
+            if (arg.Contrasena) {
+                hash_contrasena = await Encriptacion(arg.Contrasena)
+            }
             const usuarioEditadoId = await modeloUsuarios.findByIdAndUpdate({ _id: arg._id }, {
                 Primer_Nombre: arg.Primer_Nombre,
                 Segundo_Nombre: arg.Segundo_Nombre,
@@ -55,9 +61,10 @@ const resolvers_Usuarios = {
                 Segundo_Apellido: arg.Segundo_Apellido,
                 Correo: arg.Correo,
                 Identificacion: arg.Identificacion,
-                Contrasena: arg.Contrasena,
+                Contrasena: hash_contrasena,
                 Estado: arg.Estado
             }, { new: true })
+
             return usuarioEditadoId
         },
         eliminarUsuario: async (parent, arg) => {
@@ -71,6 +78,23 @@ const resolvers_Usuarios = {
                 const usuarioEliminado = await modeloUsuarios.findOneAndDelete({ Identificacion: arg.Identificacion })
                 return usuarioEliminado
             }
+        },
+        cambiarEstadoUsuario: async (parent, arg, context) => {
+
+            Autenticacion_Autorizacion(context, ["ADMINISTRADOR", "LIDER"])
+            if (context.dataUsuario.Rol === "ADMINISTRADOR") {
+                const edicionEstadoUsuario = await modeloUsuarios.findByIdAndUpdate({ _id: arg._id }, {
+                    Estado: arg.EstadoPorAdmin
+                }, { new: true })
+                return edicionEstadoUsuario
+            } else{
+                const edicionEstadoUsuario = await modeloUsuarios.findByIdAndUpdate({ _id: arg._id }, {
+                    Estado: arg.EstadoPorLider
+                }, { new: true })
+                return edicionEstadoUsuario
+            }
+
+
         }
 
     }
@@ -79,9 +103,9 @@ const resolvers_Usuarios = {
 module.exports = { resolvers_Usuarios }
     /*
 else if (Object.keys(arg).includes("Identificacion")) {
-                const buscarUsuario = await modeloUsuarios.findOne({ Identificacion: arg.Identificacion })
-                    .populate("Proyectos_Liderados")
-                    .populate({ path: "Inscripciones", populate: "Proyecto_Id" })
+const buscarUsuario = await modeloUsuarios.findOne({ Identificacion: arg.Identificacion })
+.populate("Proyectos_Liderados")
+.populate({ path: "Inscripciones", populate: "Proyecto_Id" })
 
-                return buscarUsuario
+return buscarUsuario
 */

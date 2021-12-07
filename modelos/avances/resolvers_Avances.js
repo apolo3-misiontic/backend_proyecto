@@ -1,3 +1,4 @@
+const { modeloProyectos } = require("../proyectos/Proyectos")
 const { modeloAvances } = require("./Avances")
 
 const resolvers_Avances = {
@@ -22,12 +23,23 @@ const resolvers_Avances = {
         }
     },
     Mutation: {
-        crearAvance: async(parent, arg) => {
+        crearAvance: async(parent, arg, context) => {
+
+            Autenticacion_Autorizacion(context, ["ESTUDIANTE"])
+
+            const verificarPrimerAvance = await modeloAvances.find().limit(1)
+            
             const avanceCreado = await modeloAvances.insertMany({
                 Proyecto_Id: arg.Proyecto_Id,
                 Estudiante_Id: arg.Estudiante_Id,
                 Descripcion: arg.Descripcion
             }, { populate: "Estudiante_Id" })
+
+            if (verificarPrimerAvance.length == 0){
+                await modeloProyectos.findById({_id: avanceCreado.Proyecto_Id},{
+                    Fase: "EN_DESARROLLO"
+                })
+            }
 
             return avanceCreado[0]
         },

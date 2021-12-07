@@ -9,8 +9,8 @@ const type_Proyectos = gql `
         Objetivo_General: String
         Objetivos_Especificos: [String]
         Presupuesto: Float!
-        Fecha_Inicio: Date!
-        Fecha_Terminacion: Date!
+        Fecha_Inicio: Date
+        Fecha_Terminacion: Date
         Lider_Id: Usuario!
         Estado: enum_EstadoProyecto!
         Fase: enum_FaseProyecto!
@@ -28,30 +28,37 @@ const type_Proyectos = gql `
 
     type Mutation{
         crearProyecto(
-            Nombre_Proyecto: String!,
-            Objetivo_General: String,
-            Objetivos_Especificos: [String],
-            Presupuesto: Float!,
-            Fecha_Inicio: Date!,
-            Fecha_Terminacion: Date!,
-            Lider_Id: String!,
-            Estado: enum_EstadoProyecto,
+            Nombre_Proyecto: String!
+            Objetivo_General: String
+            Objetivos_Especificos: [String]
+            Presupuesto: Float!
+            Fecha_Inicio: Date
+            Fecha_Terminacion: Date
+            Lider_Id: String!
+            Estado: enum_EstadoProyecto
             Fase: enum_FaseProyecto
         ): Proyecto
         
         editarProyecto(
             _id: ID!
-            Nombre_Proyecto: String,
-            Objetivo_General: String,
-            Objetivos_Especificos: [String],
-            Presupuesto: Float,
-            Fecha_Inicio: Date,
-            Fecha_Terminacion: Date,
-            Estado: enum_EstadoProyecto,
-            Fase: enum_FaseProyecto
+            Nombre_Proyecto: String
+            Objetivo_General: String
+            Objetivos_Especificos: [String]
+            Presupuesto: Float
         ) : Proyecto
 
         eliminarProyecto(_id:ID!): Proyecto
+
+        cambiarEstadoProyecto(
+            _id: ID!
+            Estado: enum_EstadoProyecto!
+            Fase: enum_FaseProyecto!
+        ): Proyecto
+
+        cambiarFaseProyecto(
+            _id: ID!
+            Fase: enum_FaseProyecto!
+        ): Proyecto
     }
 
 `

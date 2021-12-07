@@ -55,7 +55,13 @@ const type_Usuarios = gql `
             _id: String
             Correo: String
             Identificacion: String
-        ):Usuario
+        ): Usuario
+
+        cambiarEstadoUsuario(
+            _id: ID!
+            EstadoPorAdmin: enum_EstadoRegistro
+            EstadoPorLider: enum_EstadoRegistroLider
+        ): Usuario
     }
 
 `

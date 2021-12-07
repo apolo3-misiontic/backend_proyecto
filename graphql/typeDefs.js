@@ -20,6 +20,11 @@ const type_General = gql `
         NO_AUTORIZADO
     }
 
+    enum enum_EstadoRegistroLider{
+        PENDIENTE
+        AUTORIZADO
+    }
+
     enum enum_EstadoInscripcion{
         PENDIENTE
         ACEPTADA

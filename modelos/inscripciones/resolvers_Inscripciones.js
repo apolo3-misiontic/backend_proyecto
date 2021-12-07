@@ -22,7 +22,8 @@ const resolvers_Inscripciones = {
         }
     },
     Mutation: {
-        crearInscripcion: async(parent, arg) => {
+        crearInscripcion: async(parent, arg, context) => {
+            Autenticacion_Autorizacion(context, ["ESTUDIANTE"])
             const inscripcionCreada = await modeloInscripciones.create({
                 Proyecto_Id: arg.Proyecto_Id,
                 Estudiante_Id: arg.Estudiante_Id
