@@ -1,6 +1,6 @@
 const { gql } = require("apollo-server-express");
 
-const type_Proyectos = gql `
+const type_Proyectos = gql`
 
 
     type Proyecto{
@@ -21,7 +21,10 @@ const type_Proyectos = gql `
     type Query{
         listarProyectos:[Proyecto]
         buscarProyecto(_id: ID!): Proyecto
-        buscarProyectosPorLider(Lider_Id: String!): [Proyecto]
+        buscarProyectosPorLider(
+            Lider_Id: String!
+            filtroEstado: enum_EstadoInscripcion
+        ): [Proyecto]
     }
 
 

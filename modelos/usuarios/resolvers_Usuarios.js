@@ -14,12 +14,12 @@ const resolvers_Usuarios = {
         },
         buscarUsuario: async (parent, arg) => {
 
-            const filtroinscripcion = arg.FiltroInscripciones && { Estado: arg.FiltroInscripciones }
+            const filtroEstadoInscripcion = arg.FiltroInscripciones && { Estado: arg.FiltroInscripciones }
 
             if (Object.keys(arg).includes("_id")) {
                 const buscarUsuario = await modeloUsuarios.findById({ _id: arg._id })
                     .populate("Proyectos_Liderados")
-                    .populate({ path: "Inscripciones", match: { ...filtroinscripcion }, populate: "Proyecto_Id" })
+                    .populate({ path: "Inscripciones", match: { ...filtroEstadoInscripcion }, populate: "Proyecto_Id" })
                     .populate({ path: "Avances_Estudiantes", populate: "Proyecto_Id" })
 
                 return buscarUsuario

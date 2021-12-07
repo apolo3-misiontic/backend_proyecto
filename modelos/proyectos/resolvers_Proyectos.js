@@ -1,10 +1,11 @@
 const { Autenticacion_Autorizacion } = require("../auth/type_auth")
+const { modeloInscripciones } = require("../inscripciones/Inscripciones")
 const { modeloProyectos } = require("./Proyectos")
 
 const resolvers_Proyectos = {
     Query: {
         listarProyectos: async (parent, arg, context) => {
-            Autenticacion_Autorizacion(context, ["ADMINISTRADOR"])
+            Autenticacion_Autorizacion(context, ["ADMINISTRADOR", "ESTUDIANTE"])
             const listadoProyectos = await modeloProyectos.find()
                 .populate("Lider_Id")
                 .populate({ path: "Inscripciones", populate: "Estudiante_Id" })
@@ -23,9 +24,11 @@ const resolvers_Proyectos = {
             return proyecto
         },
         buscarProyectosPorLider: async (parent, arg) => {
+            const filtroEstadoInscripcion = arg.filtroEstado && { Estado: { $eq: `${arg.filtroEstado}` } }
+
             const proyectosPorLider = await modeloProyectos.find({ Lider_Id: arg.Lider_Id })
                 .populate("Lider_Id")
-                .populate({ path: "Inscripciones", populate: "Estudiante_Id" })
+                .populate({ path: "Inscripciones", match: { ...filtroEstadoInscripcion }, populate: "Estudiante_Id" })
                 .populate({ path: "Avances_Proyecto", populate: "Estudiante_Id" })
 
             return proyectosPorLider
@@ -64,7 +67,7 @@ const resolvers_Proyectos = {
             const proyectoEliminado = await modeloProyectos.findByIdAndDelete({ _id: arg._id })
             return proyectoEliminado
         },
-        cambiarEstadoProyecto: async (parent, arg, context) => {
+        cambiarEstadoProyecto: async (parent, arg, context) => { //verificar que este completa esta mutacion
             Autenticacion_Autorizacion(context, ["ADMINISTRADOR"])
             // se pasa la fase desde el front - el usuario no lo incluye
             if (arg.Fase === "NULL" && arg.Estado === "ACTIVO") {
@@ -76,6 +79,23 @@ const resolvers_Proyectos = {
 
                 return edicionEstadoProyecto
 
+            } else if (arg.Estado === "INACTIVO") {
+                const edicionEstadoProyecto = await modeloProyectos.findByIdAndUpdate({ _id: arg._id }, {
+                    Estado: arg.Estado,
+                    Fecha_Terminacion: Date.now()
+                }, { new: true })
+
+                if (edicionEstadoProyecto._id){
+                    await modeloInscripciones.updateMany({
+                        Proyecto_Id: arg.Id,
+                        Estado: "ACEPTADA",
+                        Fecha_Egreso: { $exists: false }
+                    }, {
+                        Fecha_Egreso: Date.now()
+                    }, { new: true })
+                }
+
+                return edicionEstadoProyecto
             }
         },
         cambiarFaseProyecto: async (parent, arg, context) => {

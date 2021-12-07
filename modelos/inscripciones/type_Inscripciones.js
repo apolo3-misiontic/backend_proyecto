@@ -33,6 +33,10 @@ const type_Inscripciones = gql `
         ):Inscripcion
 
         eliminarInscripcion(_id: ID!):Inscripcion
+
+        modificarEstadoInscripcion(
+            _id: ID!
+        ): Inscripcion
     }
 
 
