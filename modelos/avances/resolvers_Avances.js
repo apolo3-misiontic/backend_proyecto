@@ -36,7 +36,7 @@ const resolvers_Avances = {
             }, { populate: "Estudiante_Id" })
 
             if (verificarPrimerAvance.length == 0) {
-                await modeloProyectos.findById({ _id: avanceCreado.Proyecto_Id }, {
+                await modeloProyectos.findByIdAndUpdate({ _id: arg.Proyecto_Id }, {
                     Fase: "EN_DESARROLLO"
                 })
             }

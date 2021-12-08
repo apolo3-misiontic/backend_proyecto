@@ -19,7 +19,9 @@ const type_Usuarios = gql `
     }
 
     type Query{
-        listarUsuarios: [Usuario]
+        listarUsuarios(
+            filtroRol: enum_Roles
+        ): [Usuario]
         buscarUsuario(
             _id: ID
             correoOidentificacion: String

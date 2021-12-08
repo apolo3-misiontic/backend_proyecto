@@ -35,11 +35,7 @@ const type_Proyectos = gql`
             Objetivo_General: String
             Objetivos_Especificos: [String]
             Presupuesto: Float!
-            Fecha_Inicio: Date
-            Fecha_Terminacion: Date
             Lider_Id: String!
-            Estado: enum_EstadoProyecto
-            Fase: enum_FaseProyecto
         ): Proyecto
         
         editarProyecto(
@@ -55,7 +51,7 @@ const type_Proyectos = gql`
         cambiarEstadoProyecto(
             _id: ID!
             Estado: enum_EstadoProyecto!
-            Fase: enum_FaseProyecto!
+            Fase: enum_FaseProyecto
         ): Proyecto
 
         cambiarFaseProyecto(

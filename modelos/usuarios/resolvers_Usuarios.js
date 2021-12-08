@@ -5,7 +5,9 @@ const resolvers_Usuarios = {
     Query: {
         listarUsuarios: async (parent, arg, context) => {
             Autenticacion_Autorizacion(context, ["LIDER", "ADMINISTRADOR"])
-            const listaUsuarios = await modeloUsuarios.find()
+
+            const filtroRol = arg.filtroRol && { Rol: { $eq: `${arg.filtroRol}` } }
+            const listaUsuarios = await modeloUsuarios.find({...filtroRol})
                 .populate("Proyectos_Liderados")
                 .populate({ path: "Inscripciones", populate: "Proyecto_Id" })
                 .populate({ path: "Avances_Estudiantes", populate: "Proyecto_Id" })

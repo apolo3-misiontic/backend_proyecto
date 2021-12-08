@@ -52,6 +52,7 @@ const resolvers_Proyectos = {
             Autenticacion_Autorizacion(context, ["LIDER"])
             const proyectoBuscado = await modeloProyectos.findById({ _id: arg._id }, { Estado: 1 })
 
+            // verificar que no se pueda enviar si el estado es INACTIVO desde el front
             if (proyectoBuscado.Estado === "ACTIVO") {
                 const proyectoEditado = await modeloProyectos.findByIdAndUpdate({ _id: arg._id }, {
                     Nombre_Proyecto: arg.Nombre_Proyecto,
@@ -85,9 +86,9 @@ const resolvers_Proyectos = {
                     Fecha_Terminacion: Date.now()
                 }, { new: true })
 
-                if (edicionEstadoProyecto._id){
+                if (edicionEstadoProyecto._id) {
                     await modeloInscripciones.updateMany({
-                        Proyecto_Id: arg.Id,
+                        Proyecto_Id: arg._id,
                         Estado: "ACEPTADA",
                         Fecha_Egreso: { $exists: false }
                     }, {
@@ -96,12 +97,19 @@ const resolvers_Proyectos = {
                 }
 
                 return edicionEstadoProyecto
+
+            } else if (arg.Estado === "ACTIVO") {
+                const edicionEstadoProyecto = await modeloProyectos.findByIdAndUpdate({ _id: arg._id }, {
+                    Estado: arg.Estado,
+                }, { new: true })
+
+                return edicionEstadoProyecto
             }
         },
         cambiarFaseProyecto: async (parent, arg, context) => {
             Autenticacion_Autorizacion(context, ["ADMINISTRADOR"])
 
-            const verificarFaseProyecto = await modeloProyectos.findById({ _id: arg.id }, { Fase: 1 })
+            const verificarFaseProyecto = await modeloProyectos.findById({ _id: arg._id }, { Fase: 1 })
 
             if (arg.Fase === "TERMINADO" && verificarFaseProyecto.Fase === "EN_DESARROLLO") {
                 const edicionFaseProyecto = await modeloProyectos.findByIdAndUpdate({ _id: arg._id }, {
