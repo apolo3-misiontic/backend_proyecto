@@ -37,6 +37,11 @@ const type_Inscripciones = gql `
         modificarEstadoInscripcion(
             _id: ID!
         ): Inscripcion
+
+        aceptarInscripcion(
+            _id: ID!
+            Estado: enum_EstadoInscripcion!
+        ): Inscripcion
     }
 
 

@@ -27,7 +27,7 @@ const resolvers_Auth = {
                 Contrasena: hash_contrasena,
                 Rol: arg.Rol,
             })
-
+            
             delete registroCreado._doc.Contrasena //Revisar si el _doc es por la version de mongo
             const token = await GeneradorToken({ ...registroCreado._doc })
 

@@ -4,7 +4,7 @@ const { modeloUsuarios } = require("./Usuarios")
 const resolvers_Usuarios = {
     Query: {
         listarUsuarios: async (parent, arg, context) => {
-            Autenticacion_Autorizacion(context, ["LIDER", "ADMINISTRADOR"])
+            //Autenticacion_Autorizacion(context, ["LIDER", "ADMINISTRADOR"])
 
             const filtroRol = arg.filtroRol && { Rol: { $eq: `${arg.filtroRol}` } }
             const listaUsuarios = await modeloUsuarios.find({...filtroRol})
@@ -83,8 +83,8 @@ const resolvers_Usuarios = {
         },
         cambiarEstadoUsuario: async (parent, arg, context) => {
 
-            Autenticacion_Autorizacion(context, ["ADMINISTRADOR", "LIDER"])
-            if (context.dataUsuario.Rol === "ADMINISTRADOR") {
+            //Autenticacion_Autorizacion(context, ["ADMINISTRADOR", "LIDER"])
+            if ( arg.EstadoPorAdmin/*context.dataUsuario.Rol === "ADMINISTRADOR"*/) {
                 const edicionEstadoUsuario = await modeloUsuarios.findByIdAndUpdate({ _id: arg._id }, {
                     Estado: arg.EstadoPorAdmin
                 }, { new: true })

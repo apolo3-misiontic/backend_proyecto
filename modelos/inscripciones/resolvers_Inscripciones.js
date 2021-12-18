@@ -25,16 +25,17 @@ const resolvers_Inscripciones = {
     Mutation: {
         crearInscripcion: async (parent, arg, context) => {
             Autenticacion_Autorizacion(context, ["ESTUDIANTE"])
-            const inscripcionCreada = await modeloInscripciones.create({
-                Proyecto_Id: arg.Proyecto_Id,
-                Estudiante_Id: arg.Estudiante_Id
-            })
-            return inscripcionCreada
+            if (context.dataUsuario.Estado === "ACEPTADA") {
+
+                const inscripcionCreada = await modeloInscripciones.create({
+                    Proyecto_Id: arg.Proyecto_Id,
+                    Estudiante_Id: arg.Estudiante_Id
+                })
+                return inscripcionCreada
+            }
         },
         editarInscripcion: async (parent, arg) => {
-            if (arg.Estado === "ACEPTADA") {
-                arg.Fecha_Ingreso = Date.now()
-            }
+ 
             const inscripcionEditada = await modeloInscripciones.findByIdAndUpdate({ _id: arg._id }, {
                 Proyecto_Id: arg.Proyecto_Id,
                 Estado: arg.Estado,
@@ -49,6 +50,7 @@ const resolvers_Inscripciones = {
             return inscripcionEliminada
         },
         modificarEstadoInscripcion: async (parent, arg, context) => {
+
             Autenticacion_Autorizacion(context, ["LIDER"])
 
             if (arg.Estado === "ACEPTADA") {
@@ -63,6 +65,17 @@ const resolvers_Inscripciones = {
                 })
                 return estadoModificado
             }
+        },
+        aceptarInscripcion: async (parent, arg) => {
+            if (arg.Estado === "ACEPTADA") {
+                arg.Fecha_Ingreso = Date.now()
+            }
+            const inscripcionAceptada = await modeloInscripciones.findByIdAndUpdate({ _id: arg._id }, {
+                Estado: arg.Estado,
+                Fecha_Ingreso: arg.Fecha_Ingreso,
+            }, { new: true })
+
+            return inscripcionAceptada
         }
     }
 
