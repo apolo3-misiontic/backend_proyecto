@@ -7,6 +7,11 @@
         "start": "node index.js",
         "dev": "nodemon index.js"
     },
+
+    "engines": {
+        "node": "14.x"
+      },
+      
     "dependencies": {
         "apollo-server-express": "^3.5.0",
         "bcrypt": "^5.0.1",
