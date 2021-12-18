@@ -9,7 +9,7 @@ const { ValidarToken } = require("./modelos/auth/Auth")
 require("dotenv").config()
 
 const app = express()
-const puerto = process.env.PORT || 4444
+const puerto = process.env.PORT || 4000
 
 app.use(cors())
 app.use(express.json())
